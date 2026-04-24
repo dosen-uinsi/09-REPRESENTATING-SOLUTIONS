@@ -1,325 +1,302 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" data-theme="light">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Mind Map: Representasi Solusi (Responsive)</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<title>Mathnology - Mind Map: Representasi Solusi</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-  * {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-  }
-
-  body {
-    background-color: #fcfcfc; 
-    font-family: 'Inter', sans-serif;
-    color: #334155;
-    min-height: 100vh;
-    /* Ubah alignment agar tidak terpotong di layar kecil saat di-scroll */
-    display: flex;
-    justify-content: flex-start;
-    align-items: flex-start; 
-    overflow-x: auto;
-    overflow-y: auto;
-    padding: 60px;
-    -webkit-overflow-scrolling: touch; /* Scroll mulus di iOS */
-  }
-
-  .mindmap-container {
-    position: relative;
-    padding: 20px;
-    margin: auto 0; /* Menengah secara vertikal jika muat */
-  }
-
-  ul {
-    list-style: none;
-    display: flex;
-    flex-direction: column;
-    position: relative;
-  }
-
-  .mindmap li {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    position: relative;
-    padding: 10px 0;
-  }
-
-  .children {
-    margin-left: 65px;
-    position: relative;
-    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-    transform-origin: left center;
-    opacity: 1;
-    max-width: 3000px; 
-    max-height: 3000px;
-  }
-
-  .collapsed > .children {
-    opacity: 0;
-    max-width: 0;
-    max-height: 0;
-    overflow: hidden;
-    transform: scaleX(0.4);
-    margin-left: 0;
-    padding: 0;
-  }
-
-  /* --- DESAIN GARIS PENGHUBUNG --- */
+  /* ========================================================
+     CSS VARIABLES (TEMA TERANG & GELAP)
+     ======================================================== */
   :root {
+    --bg-main: #fcfcfc;
+    --text-main: #334155;
+    --text-muted: #64748b;
     --line-color: #cbd5e1;
     --line-thickness: 2px;
+    
+    /* Warna Node (Biru) */
+    --node-blue-grad1: #e0e7ff;
+    --node-blue-grad2: #c7d2fe;
+    --node-blue-border: #c7d2fe;
+    --node-blue-text: #312e81;
+
+    /* Warna Node (Hijau) */
+    --node-green-grad1: #dcfce7;
+    --node-green-grad2: #bbf7d0;
+    --node-green-border: #bbf7d0;
+    --node-green-text: #14532d;
+
+    /* Bayangan & Elemen UI */
+    --shadow-sm: rgba(0, 0, 0, 0.04);
+    --shadow-md: rgba(0, 0, 0, 0.08);
+    --toggle-bg: #ffffff;
+    --toggle-border: #e2e8f0;
+    --toggle-hover-bg: #f8fafc;
+    
+    /* Modal / Pop-up */
+    --modal-bg: #ffffff;
+    --modal-overlay: rgba(15, 23, 42, 0.5);
+    --modal-title-border: #e2e8f0;
+    --btn-close-bg: #f1f5f9;
+    --btn-close-hover: #e2e8f0;
+    --btn-close-text: #64748b;
+
+    /* Warna Tabel */
+    --table-header-bg: #f8fafc;
+    --table-row-even-bg: #f1f5f9;
+    --table-border: #e2e8f0;
   }
 
-  .children::before {
-    content: '';
-    position: absolute; left: -65px; top: 50%; width: 65px;
-    border-top: var(--line-thickness) solid var(--line-color);
-    z-index: 1; transition: all 0.5s ease;
+  [data-theme="dark"] {
+    --bg-main: #0f172a;
+    --text-main: #f8fafc;
+    --text-muted: #94a3b8;
+    --line-color: #475569;
+    
+    /* Warna Node (Biru) - Dark Mode */
+    --node-blue-grad1: #1e3a8a;
+    --node-blue-grad2: #1e40af;
+    --node-blue-border: #1e40af;
+    --node-blue-text: #eff6ff;
+
+    /* Warna Node (Hijau) - Dark Mode */
+    --node-green-grad1: #14532d;
+    --node-green-grad2: #166534;
+    --node-green-border: #166534;
+    --node-green-text: #f0fdf4;
+
+    /* Bayangan & Elemen UI - Dark Mode */
+    --shadow-sm: rgba(0, 0, 0, 0.4);
+    --shadow-md: rgba(0, 0, 0, 0.6);
+    --toggle-bg: #1e293b;
+    --toggle-border: #475569;
+    --toggle-hover-bg: #334155;
+    
+    /* Modal / Pop-up - Dark Mode */
+    --modal-bg: #1e293b;
+    --modal-overlay: rgba(0, 0, 0, 0.75);
+    --modal-title-border: #334155;
+    --btn-close-bg: #334155;
+    --btn-close-hover: #475569;
+    --btn-close-text: #cbd5e1;
+
+    /* Warna Tabel - Dark Mode */
+    --table-header-bg: #334155;
+    --table-row-even-bg: #0f172a;
+    --table-border: #475569;
   }
 
+  /* ========================================================
+     RESET & LAYOUT DASAR
+     ======================================================== */
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background-color: var(--bg-main); 
+    font-family: 'Inter', sans-serif;
+    color: var(--text-main);
+    min-height: 100vh;
+    display: flex; flex-direction: column; align-items: flex-start; 
+    overflow-x: auto; overflow-y: auto;
+    padding: 40px 60px; -webkit-overflow-scrolling: touch;
+    transition: background-color 0.4s ease, color 0.4s ease;
+  }
+
+  /* ========================================================
+     HEADER & JUDUL
+     ======================================================== */
+  .header-container {
+    width: 100%; display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 30px; padding-left: 20px; position: sticky; left: 0;
+  }
+
+  .app-title {
+    font-size: 3.5rem; font-weight: 800; text-transform: lowercase; letter-spacing: -1.5px;
+    background: linear-gradient(135deg, #3b82f6, #8b5cf6, #ec4899);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    text-shadow: 0 4px 20px rgba(139, 92, 246, 0.2); user-select: none;
+  }
+
+  /* Tombol Toggle Tema */
+  .theme-toggle {
+    background: var(--toggle-bg); border: 2px solid var(--toggle-border); color: var(--text-main);
+    width: 48px; height: 48px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.2rem; cursor: pointer; box-shadow: 0 4px 6px var(--shadow-sm);
+    transition: all 0.3s ease; position: fixed; top: 40px; right: 60px; z-index: 100;
+  }
+  .theme-toggle:hover { transform: translateY(-2px) scale(1.05); box-shadow: 0 6px 12px var(--shadow-md); }
+
+  /* ========================================================
+     MIND MAP STYLES
+     ======================================================== */
+  .mindmap-container { position: relative; padding: 20px; }
+  ul { list-style: none; display: flex; flex-direction: column; position: relative; }
+  .mindmap li { display: flex; flex-direction: row; align-items: center; position: relative; padding: 10px 0; }
+
+  .children {
+    margin-left: 65px; position: relative; transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    transform-origin: left center; opacity: 1; max-width: 3000px; max-height: 3000px;
+  }
+  .collapsed > .children {
+    opacity: 0; max-width: 0; max-height: 0; overflow: hidden;
+    transform: scaleX(0.4); margin-left: 0; padding: 0;
+  }
+
+  /* Garis Penghubung */
+  .children::before { content: ''; position: absolute; left: -65px; top: 50%; width: 65px; border-top: var(--line-thickness) solid var(--line-color); z-index: 1; transition: all 0.5s ease; }
   .children > li { padding-left: 25px; }
-  .children > li::before {
-    content: ''; position: absolute; left: 0; top: 0; bottom: 0;
-    border-left: var(--line-thickness) solid var(--line-color); z-index: 1;
-  }
-  .children > li::after {
-    content: ''; position: absolute; left: 0; top: 50%; width: 25px;
-    border-top: var(--line-thickness) solid var(--line-color); z-index: 1;
-  }
-
-  .children > li:first-child::before {
-    top: 50%; bottom: 0; border-top-left-radius: 16px;
-    border-top: var(--line-thickness) solid var(--line-color);
-    border-left: var(--line-thickness) solid var(--line-color); width: 25px;
-  }
+  .children > li::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; border-left: var(--line-thickness) solid var(--line-color); z-index: 1; transition: border-color 0.4s ease; }
+  .children > li::after { content: ''; position: absolute; left: 0; top: 50%; width: 25px; border-top: var(--line-thickness) solid var(--line-color); z-index: 1; transition: border-color 0.4s ease; }
+  .children > li:first-child::before { top: 50%; bottom: 0; border-top-left-radius: 16px; border-top: var(--line-thickness) solid var(--line-color); border-left: var(--line-thickness) solid var(--line-color); width: 25px; }
   .children > li:first-child::after { display: none; }
-  .children > li:last-child::before {
-    bottom: 50%; top: 0; border-bottom-left-radius: 16px;
-    border-bottom: var(--line-thickness) solid var(--line-color);
-    border-left: var(--line-thickness) solid var(--line-color); width: 25px;
-  }
+  .children > li:last-child::before { bottom: 50%; top: 0; border-bottom-left-radius: 16px; border-bottom: var(--line-thickness) solid var(--line-color); border-left: var(--line-thickness) solid var(--line-color); width: 25px; }
   .children > li:last-child::after { display: none; }
-  .children > li:first-child:last-child::before {
-    border-radius: 0; border-top: none; border-bottom: none;
-  }
+  .children > li:first-child:last-child::before { border-radius: 0; border-top: none; border-bottom: none; }
   .children > li:first-child:last-child::after { display: block; }
 
-  /* --- DESAIN NODE & KOTAK TEKS --- */
-  .node-wrapper {
-    position: relative;
-    display: flex;
-    align-items: center;
-    z-index: 2;
-  }
-
+  /* Node (Kotak Teks) */
+  .node-wrapper { position: relative; display: flex; align-items: center; z-index: 2; }
   .node {
-    padding: 12px 26px;
-    border-radius: 10px;
-    font-size: 14px;
-    font-weight: 500;
-    letter-spacing: 0.2px;
-    line-height: 1.5;
-    white-space: nowrap;
-    cursor: pointer;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    border: 1px solid transparent;
-    user-select: none;
-    -webkit-tap-highlight-color: transparent;
+    padding: 12px 26px; border-radius: 10px; font-size: 14px; font-weight: 500;
+    letter-spacing: 0.2px; line-height: 1.5; white-space: nowrap; cursor: pointer;
+    box-shadow: 0 2px 8px var(--shadow-sm); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 1px solid transparent; user-select: none; -webkit-tap-highlight-color: transparent;
   }
+  .node:hover { transform: translateY(-2px); box-shadow: 0 8px 16px var(--shadow-md); }
+  .node.blue { background: linear-gradient(135deg, var(--node-blue-grad1) 0%, var(--node-blue-grad2) 100%); border-color: var(--node-blue-border); color: var(--node-blue-text); }
+  .node.green { background: linear-gradient(135deg, var(--node-green-grad1) 0%, var(--node-green-grad2) 100%); border-color: var(--node-green-border); color: var(--node-green-text); }
 
-  .node:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
-  }
-
-  .node.blue {
-    background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%);
-    border-color: #c7d2fe; color: #312e81;
-  }
-
-  .node.green {
-    background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
-    border-color: #bbf7d0; color: #14532d;
-  }
-
-  /* --- DESAIN IKON TOGGLE (+ / -) --- */
+  /* Ikon Toggle (+ / -) */
   .toggle-icon {
-    position: absolute;
-    right: -14px;
-    width: 28px;
-    height: 28px;
-    background-color: #ffffff;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 20px;
-    font-weight: 500;
-    color: #64748b;
-    cursor: pointer;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
-    border: 1px solid #e2e8f0;
-    z-index: 3;
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    user-select: none;
-    -webkit-tap-highlight-color: transparent;
+    position: absolute; right: -14px; width: 28px; height: 28px;
+    background-color: var(--toggle-bg); border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    font-size: 20px; font-weight: 500; color: var(--text-muted); cursor: pointer; box-shadow: 0 2px 6px var(--shadow-sm);
+    border: 1px solid var(--toggle-border); z-index: 3; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    user-select: none; -webkit-tap-highlight-color: transparent;
   }
-
   .toggle-icon::before { content: '−'; line-height: 1; margin-top: -2px; }
-  .toggle-icon:hover {
-    transform: scale(1.1); color: #0f172a; border-color: #94a3b8;
-  }
-
-  .collapsed > .node-wrapper .toggle-icon {
-    transform: rotate(-90deg); background-color: #f8fafc;
-  }
+  .toggle-icon:hover { transform: scale(1.1); color: var(--text-main); border-color: var(--text-muted); }
+  .collapsed > .node-wrapper .toggle-icon { transform: rotate(-90deg); background-color: var(--toggle-hover-bg); }
   .collapsed > .node-wrapper .toggle-icon::before { content: '+'; }
-  .collapsed > .node-wrapper .toggle-icon:hover {
-    transform: rotate(-90deg) scale(1.1);
-  }
+  .collapsed > .node-wrapper .toggle-icon:hover { transform: rotate(-90deg) scale(1.1); }
   .no-children .toggle-icon { display: none; }
 
-  /* --- POP-UP (MODAL) STYLES --- */
+  /* ========================================================
+     MODAL / POP-UP STYLES & TABEL
+     ======================================================== */
   .modal-overlay {
-    position: fixed;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background-color: rgba(15, 23, 42, 0.5);
-    backdrop-filter: blur(4px);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-    opacity: 0;
-    visibility: hidden;
-    transition: all 0.3s ease;
-    padding: 20px;
+    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    background-color: var(--modal-overlay); backdrop-filter: blur(4px);
+    display: flex; justify-content: center; align-items: center;
+    z-index: 1000; opacity: 0; visibility: hidden;
+    transition: all 0.3s ease; padding: 20px;
   }
-
-  .modal-overlay.active {
-    opacity: 1;
-    visibility: visible;
-  }
+  .modal-overlay.active { opacity: 1; visibility: visible; }
 
   .modal-content {
-    background-color: #ffffff;
-    width: 100%;
-    max-width: 600px; 
-    padding: 30px;
-    border-radius: 16px;
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-    transform: translateY(20px) scale(0.95);
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    position: relative;
-    max-height: 85vh;
-    display: flex;
-    flex-direction: column;
+    background-color: var(--modal-bg); width: 100%; max-width: 600px; padding: 30px; border-radius: 16px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    transform: translateY(20px) scale(0.95); transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative; max-height: 85vh; display: flex; flex-direction: column;
   }
-
-  .modal-overlay.active .modal-content {
-    transform: translateY(0) scale(1);
-  }
+  .modal-overlay.active .modal-content { transform: translateY(0) scale(1); }
 
   .close-btn {
-    position: absolute;
-    top: 20px; right: 20px;
-    background: #f1f5f9;
-    border: none;
-    width: 36px; height: 36px; /* Diperbesar sedikit agar mudah disentuh */
-    border-radius: 50%;
-    display: flex; justify-content: center; align-items: center;
-    font-size: 22px; color: #64748b;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    z-index: 10;
+    position: absolute; top: 20px; right: 20px;
+    background: var(--btn-close-bg); border: none;
+    width: 36px; height: 36px; border-radius: 50%; display: flex; justify-content: center; align-items: center;
+    font-size: 22px; color: var(--btn-close-text); cursor: pointer; transition: all 0.2s ease; z-index: 10;
   }
-
-  .close-btn:hover { background: #e2e8f0; color: #0f172a; }
+  .close-btn:hover { background: var(--btn-close-hover); color: var(--text-main); }
 
   .modal-title {
-    font-size: 20px;
-    font-weight: 600;
-    color: #1e293b;
-    margin-bottom: 15px;
-    padding-right: 40px;
-    border-bottom: 2px solid #e2e8f0;
-    padding-bottom: 10px;
-    flex-shrink: 0;
+    font-size: 20px; font-weight: 600; color: var(--text-main); margin-bottom: 15px; padding-right: 40px;
+    border-bottom: 2px solid var(--modal-title-border); padding-bottom: 10px; flex-shrink: 0;
   }
-
   .modal-body {
-    font-size: 15px;
-    line-height: 1.6;
-    color: #475569;
-    overflow-y: auto;
-    padding-right: 5px;
+    font-size: 15px; line-height: 1.6; color: var(--text-muted); overflow-y: auto; padding-right: 5px;
   }
-
-  .modal-body ul { margin-left: 20px; margin-top: 10px; margin-bottom: 10px; }
+  .modal-body ul { margin-left: 20px; margin-top: 10px; margin-bottom: 10px; color: var(--text-muted); }
   .modal-body li { padding: 0; margin-bottom: 8px; }
   .modal-body p { margin-bottom: 12px; }
-
   .modal-body img {
-    max-width: 100%;
-    height: auto;
-    border-radius: 8px;
-    margin: 15px 0;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-    border: 1px solid #e2e8f0;
-    display: block;
+    max-width: 100%; height: auto; border-radius: 8px; margin: 15px 0;
+    box-shadow: 0 4px 6px -1px var(--shadow-sm); border: 1px solid var(--toggle-border); display: block;
   }
+
+  /* Desain Tabel Kustom */
+  .table-responsive {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    margin: 15px 0;
+    border-radius: 8px;
+    border: 1px solid var(--table-border);
+  }
+  
+  .custom-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    text-align: left;
+    min-width: 400px;
+  }
+
+  .custom-table th, .custom-table td {
+    padding: 12px 15px;
+    border-bottom: 1px solid var(--table-border);
+    color: var(--text-main);
+  }
+
+  .custom-table th {
+    background-color: var(--table-header-bg);
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .custom-table tbody tr:nth-child(even) {
+    background-color: var(--table-row-even-bg);
+  }
+  
+  .custom-table tbody tr:hover {
+    background-color: var(--toggle-hover-bg);
+  }
+
+  /* Scrollbar Kustom untuk Modal (Opsional) */
+  .modal-body::-webkit-scrollbar { width: 6px; }
+  .modal-body::-webkit-scrollbar-track { background: transparent; }
+  .modal-body::-webkit-scrollbar-thumb { background-color: var(--toggle-border); border-radius: 10px; }
 
   /* ========================================================
      MEDIA QUERIES (UNTUK HP & TABLET)
      ======================================================== */
   @media (max-width: 768px) {
-    body {
-      padding: 20px; /* Kurangi area kosong di pinggir pada HP */
-    }
-
-    .mindmap-container {
-      padding: 10px;
-    }
-
-    /* Perkecil ukuran node agar muat lebih banyak di layar */
-    .node {
-      padding: 10px 16px;
-      font-size: 13px;
-      white-space: normal; /* Izinkan teks melipat jika kepanjangan */
-      max-width: 200px; /* Batasi lebar maksimal kotak */
-      text-align: center;
-    }
-
-    /* Persingkat garis penghubung */
+    body { padding: 20px; }
+    .header-container { margin-bottom: 20px; padding-left: 10px; flex-direction: column; align-items: flex-start; }
+    .app-title { font-size: 2.5rem; }
+    .theme-toggle { top: 20px; right: 20px; width: 40px; height: 40px; font-size: 1rem; }
+    .mindmap-container { padding: 10px; margin-top: 10px; }
+    .node { padding: 10px 16px; font-size: 13px; white-space: normal; max-width: 200px; text-align: center; }
     .children { margin-left: 40px; }
     .children::before { left: -40px; width: 40px; }
-
-    /* Sesuaikan Pop-up untuk layar HP */
-    .modal-content {
-      padding: 20px;
-      max-height: 90vh; /* Memanfaatkan tinggi layar HP secara maksimal */
-    }
-
-    .modal-title {
-      font-size: 18px;
-    }
-
-    .modal-body {
-      font-size: 14px;
-    }
-
-    .close-btn {
-      top: 15px; right: 15px;
-    }
+    .modal-content { padding: 20px; max-height: 90vh; }
+    .modal-title { font-size: 18px; }
+    .modal-body { font-size: 14px; }
+    .close-btn { top: 15px; right: 15px; }
   }
 
 </style>
 </head>
 <body>
+
+<div class="header-container">
+  <div class="app-title">mathnology</div>
+</div>
+
+<button class="theme-toggle" id="themeToggle" title="Ganti Tema">🌙</button>
 
 <div class="mindmap-container">
   <ul class="mindmap">
@@ -430,7 +407,30 @@
 </div>
 
 <script>
-  // --- DATABASE PENJELASAN (Diperbarui dengan Detail Mendalam) ---
+  // --- LOGIKA TEMA (DARK/LIGHT MODE) ---
+  const themeToggleBtn = document.getElementById('themeToggle');
+  const htmlElement = document.documentElement;
+
+  // Cek preferensi tema di LocalStorage saat pertama kali dimuat
+  const savedTheme = localStorage.getItem('theme') || 'light';
+  htmlElement.setAttribute('data-theme', savedTheme);
+  updateToggleIcon(savedTheme);
+
+  // Fungsi saat tombol tema diklik
+  themeToggleBtn.addEventListener('click', () => {
+    const currentTheme = htmlElement.getAttribute('data-theme');
+    const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+    
+    htmlElement.setAttribute('data-theme', newTheme);
+    localStorage.setItem('theme', newTheme);
+    updateToggleIcon(newTheme);
+  });
+
+  function updateToggleIcon(theme) {
+    themeToggleBtn.textContent = theme === 'light' ? '🌙' : '☀️';
+  }
+
+  // --- DATABASE PENJELASAN (DIPERBARUI DENGAN TABEL SCHOENFELD) ---
   const explanations = {
     "Representasi Solusi": `
       <p>Ini adalah konsep utama yang membahas bahwa proses "transfer" ilmu atau pemahaman bisa terjadi pada tingkat metode yang lebih umum (<i>general level</i>), bukan sekadar meniru detail langkah per langkah dari masalah sebelumnya.</p>
@@ -538,7 +538,43 @@
       <p>White (1993a) mengusulkan pendekatan <i>middle-out</i>. Alih-alih mengajar fisika dengan rumus abstrak seperti V=IR secara *top-down* (yang dinilai terlalu jauh dari dunia nyata) atau dari paparan contoh dunia nyata murni secara *bottom-up* (yang sangat lambat), siswa diperkenalkan materi melalui model kausal yang direpresentasikan pada tingkat "abstraksi menengah".</p>
     `,
     "Schoenfeld": `
-      <p>Schoenfeld dan Hermann (1982) membandingkan pengelompokan masalah oleh mahasiswa ahli dan mahasiswa pemula. Awalnya, mahasiswa pemula mengkategorikan soal matematika hanya dari cerita permukaannya. Namun, setelah menyelesaikan kursus sebulan tentang pemecahan masalah matematika (heuristik), pemula ini mengubah pola mereka. Pada tes akhir, mereka berhasil mengklasifikasikan masalah berdasarkan "metode solusi", yang mana polanya menjadi sangat mirip dengan mahasiswa pakar.</p>
+      <p>Schoenfeld dan Hermann (1982) membandingkan pengelompokan masalah oleh mahasiswa ahli dan mahasiswa pemula. Tabel 9.1 dalam studi mereka membuktikan adanya perubahan pola pikir siswa secara kuantitatif setelah mengikuti kursus matematika berdurasi satu bulan.</p>
+      
+      <div class="table-responsive">
+        <table class="custom-table">
+          <thead>
+            <tr>
+              <th>Kelompok Penguji</th>
+              <th>Fokus pada Konten Cerita</th>
+              <th>Fokus pada Metode Solusi</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Pakar (Experts)</strong></td>
+              <td>Rendah</td>
+              <td>Tinggi</td>
+            </tr>
+            <tr>
+              <td><strong>Pemula (Pretest)</strong></td>
+              <td>Tinggi</td>
+              <td>Rendah</td>
+            </tr>
+            <tr>
+              <td><strong>Eksperimen (Posttest - Mengikuti Kursus)</strong></td>
+              <td>Menurun Drastis</td>
+              <td>Meningkat (Sangat Mirip Pakar)</td>
+            </tr>
+            <tr>
+              <td><strong>Kontrol (Posttest - Tidak Mengikuti Kursus)</strong></td>
+              <td>Tetap Tinggi</td>
+              <td>Tetap Rendah</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>Awalnya, pemula mengkategorikan soal matematika hanya dari cerita permukaannya (misal: "ini sama-sama soal tentang kereta api"). Namun, kelompok eksperimen yang mengikuti kursus berhasil mematahkan kebiasaan ini. Pada tes akhir (Posttest), mereka mampu mengklasifikasikan masalah berdasarkan "metode solusi", sehingga pola pikir mereka menjadi terbukti sangat mirip dengan para pakar matematika.</p>
     `,
     "Novick & Hmelo": `
       <p>Novick dan Hmelo (1994) menguji apakah siswa akan mentransfer penggunaan diagram. Hasilnya, "transfer spontan" (menyadari kesamaan tanpa diberitahu) ternyata gagal. Namun, ketika kelompok siswa diberikan <i>isyarat</i> (hint) untuk menggunakan contoh soal jembatan yang sebelumnya mereka pelajari, frekuensi dan kesuksesan mereka dalam memodelkan masalah baru (jabat tangan) menggunakan diagram jaringan meningkat drastis.</p>
@@ -555,6 +591,7 @@
     `
   };
 
+  // --- LOGIKA EVENT LISTENER UNTUK MIND MAP & MODAL ---
   document.addEventListener('DOMContentLoaded', () => {
     const nodeWrappers = document.querySelectorAll('.node-wrapper');
     const modalOverlay = document.getElementById('modalOverlay');
@@ -566,10 +603,9 @@
       const nodeElement = wrapper.querySelector('.node');
       const toggleIcon = wrapper.querySelector('.toggle-icon');
 
-      // 1. Logika Klik pada Kotak Teks (Menampilkan Pop-up)
+      // Buka Pop-up
       nodeElement.addEventListener('click', function(e) {
         e.stopPropagation(); 
-        
         const dataKey = this.getAttribute('data-key');
         const content = explanations[dataKey];
 
@@ -582,12 +618,10 @@
         }
 
         modalOverlay.classList.add('active');
-        
-        // Mencegah background scroll saat modal terbuka (khusus HP)
-        document.body.style.overflow = 'hidden';
+        document.body.style.overflow = 'hidden'; // Cegah background scroll
       });
 
-      // 2. Logika Klik pada Ikon Bulat (Membuka/Menutup Cabang)
+      // Buka/Tutup Cabang Anak
       if (toggleIcon) {
         toggleIcon.addEventListener('click', function(e) {
           e.stopPropagation();
@@ -599,11 +633,10 @@
       }
     });
 
-    // Logika Menutup Modal
+    // Tutup Pop-up
     const closeModal = () => {
       modalOverlay.classList.remove('active');
-      // Mengembalikan fungsi scroll pada background
-      document.body.style.overflow = '';
+      document.body.style.overflow = ''; 
     };
 
     closeBtn.addEventListener('click', closeModal);
